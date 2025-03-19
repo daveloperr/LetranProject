@@ -1,10 +1,10 @@
 import React, { useState } from "react";
-import { Text, View, TextInput, TouchableOpacity, Alert } from "react-native";
+import { 
+  Text, View, TextInput, TouchableOpacity, Alert, Image, ScrollView 
+} from "react-native";
 import { Style } from "./src/styles/Mainstyle";
 
-
 // LOPEZ, DAVE IT3B-SD | FIRST ACTIVITY: REGISTRATION
-
 
 const App = () => {
   const [username, setUsername] = useState('');
@@ -16,134 +16,115 @@ const App = () => {
   const [submitted, setSubmitted] = useState(false);
 
   const handleRegister = () => {
-
-    if (contact.length != 11) {
-      Alert.alert("Invalid Contact", "Contact number must be exactly 11 digits");
+    if (username.trim() === "" || firstName.trim() === "" || lastName.trim() === "" || 
+        contact.trim() === "" || email.trim() === "" || password.trim() === "") {
+      Alert.alert("Missing Information", "All fields must be filled out.");
       return;
     }
+
+    if (contact.length !== 11) {
+      Alert.alert("Invalid Contact", "Contact number must be exactly 11 digits.");
+      return;
+    }
+
     if (!email.includes("@") || !email.endsWith(".com")) {
-      Alert.alert("Invalid Email");
+      Alert.alert("Invalid Email", "Please enter a valid email address.");
       return;
     }
 
-    console.log("Registered User:");
-    console.log("Username:", username);
-    console.log("First Name:", firstName);
-    console.log("Last Name:", lastName);
-    console.log("Contact:", contact);
-    console.log("Email:", email);
-    console.log("Password:", password);
+    console.log("Registered User:", { username, firstName, lastName, contact, email, password });
 
     setSubmitted(true);
   };
+
   const handleContactChange = (text) => {
-    let isNumeric = true;
-
-
-    for (let i = 0; i < text.length; i++) {  // check if it's a number
-      if (text[i] < "0" || text[i] > "9") {
-        isNumeric = false;
-        break; // stop checking if a non-numeric 
-      }
-    }
-
-    //allow only numeric input and restrict to 11 digits
-    if (isNumeric) {
-      if (text.length <= 11) {
-        setContact(text); // can only type  up to 11 digits
-      }
-    }
-
-    //  alert if exceeds 11 digits
-    if (text.length > 11) {
-      Alert.alert("Invalid Contact", "Contact number must be exactly 11 digits.");
+    if (/^\d*$/.test(text) && text.length <= 11) {
+      setContact(text);
     }
   };
 
-
-
-
   return (
     <View style={Style.container}>
-      <Text style={Style.title}>Create a new account</Text>
-      <Text style={Style.subTitle}>It's quick and easy.</Text>
+    <ScrollView contentContainerStyle={Style.scrollContainer}>
 
-      {/* Username */}
-      <TextInput
-        placeholder="Username"
-        value={username}
-        onChangeText={setUsername}
-        style={Style.TextInput}
-      />
+    <View style={Style.imageContainer}>
+          <Image source={require("./src/assets/pig.png")} style={Style.pigImage} />
+        </View>
 
-      <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+    
+      <View style={Style.registerContainer}>
+        
 
-        {/* First Name */}
+        <Text style={Style.title}>Create a new account</Text>
+        <Text style={Style.subTitle}>It's quick and easy.</Text>
+
+      
         <TextInput
-          placeholder="First Name"
-          value={firstName}
-          onChangeText={setFirstName}
-          style={[Style.TextInput, { flex: 1, marginRight: 6 }]}
+          placeholder="Username"
+          value={username}
+          onChangeText={setUsername}
+          style={Style.TextInput}
         />
 
-        {/* Last Name */}
+        <View style={Style.rowContainer}>
+          <TextInput
+            placeholder="First Name"
+            value={firstName}
+            onChangeText={setFirstName}
+            style={[Style.TextInput, Style.halfInput]}
+          />
+          <TextInput
+            placeholder="Last Name"
+            value={lastName}
+            onChangeText={setLastName}
+            style={[Style.TextInput, Style.halfInput]}
+          />
+        </View>
+
+     
         <TextInput
-          placeholder="Last Name"
-          value={lastName}
-          onChangeText={setLastName}
-          style={[Style.TextInput, { flex: 1 }]}
+          placeholder="Contact Number"
+          value={contact}
+          onChangeText={setContact}
+          style={Style.TextInput}
+          keyboardType="numeric"
+          maxLength={11}
         />
 
+        <TextInput
+          placeholder="Email"
+          value={email}
+          onChangeText={setEmail}
+          style={Style.TextInput}
+          keyboardType="email-address"
+        />
+
+        <TextInput
+          placeholder="Password"
+          value={password}
+          onChangeText={setPassword}
+          style={Style.TextInput}
+          secureTextEntry
+        />
+
+        <TouchableOpacity style={Style.button} onPress={handleRegister}>
+          <Text style={Style.buttonText}>Register</Text>
+        </TouchableOpacity>
+
+        {submitted && (
+          <View style={Style.resultContainer}>
+            <Text style={Style.resultText}>✅ Registered Successfully!</Text>
+            <Text>Username: {username}</Text>
+            <Text>First Name: {firstName}</Text>
+            <Text>Last Name: {lastName}</Text>
+            <Text>Contact Number: {contact}</Text>
+            <Text>Email: {email}</Text>
+          </View>
+        )}
       </View>
 
-      {/* Contact */}
-      <TextInput
-        placeholder="Contact Number"
-        value={contact}
-        onChangeText={handleContactChange}
-        style={Style.TextInput}
-      />
-
-      {/* Email */}
-      <TextInput
-        placeholder="Email"
-        value={email}
-        onChangeText={setEmail}
-        style={Style.TextInput}
-        keyboardType="email-address"
-
-      />
-
-      {/* Password */}
-      <TextInput
-        placeholder="Password"
-        value={password}
-        onChangeText={setPassword}
-        style={Style.TextInput}
-        secureTextEntry={true}
-
-      />
-
-      {/* Register */}
-      <TouchableOpacity style={Style.button} onPress={handleRegister} >
-        <Text style={Style.buttonText} >Register</Text>
-      </TouchableOpacity>
-
-
-
-      {/* Display Registered Data */}
-      {submitted && (
-        <View style={Style.resultContainer}>
-          <Text style={Style.resultText}>✅ Registered Successfully!</Text>
-          <Text>Username: {username}</Text>
-          <Text>First Name: {firstName}</Text>
-          <Text>Last Name: {lastName}</Text>
-          <Text>Contact Number: {contact}</Text>
-          <Text>Email: {email}</Text>
-          <Text>Password: {password}</Text>
-        </View>
-      )}
-    </View>
+    </ScrollView>
+  </View>
   );
 };
 
